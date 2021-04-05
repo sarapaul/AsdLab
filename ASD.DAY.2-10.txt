@@ -1,0 +1,414 @@
+CREATE TABLE EMPLOYEE(EmpId Varchar2(5),EmpName Varchar2(20),Job Varchar2(20),Manager Varchar2(5),DeptNo Varchar2(4),HireDate Date,Salary Number(10,3),Comm Number(10,3));
+INSERT INTO EMPLOYEE VALUES('E0000','Sara Paul','Tester','E0004','D004','2/dec/12',40000,500);
+INSERT INTO EMPLOYEE VALUES('E0001','Abey','Tester','E0004','D004','15/dec/12',30000,500);
+INSERT INTO EMPLOYEE VALUES('E0002','Jesto','Analyst','E0001','D002','24/april/11',25000,650);
+INSERT INTO EMPLOYEE VALUES('E0003','Adarsh','Clerk','E0004','D004','10/jan/13',15000,500);
+INSERT INTO EMPLOYEE VALUES('E0004','Kevin','Admin','E0005','D002','10/oct/13',20000,1750);
+INSERT INTO EMPLOYEE VALUES('E0005','Bony','Manager',null,'D001','11/april/11',50000,1000);
+INSERT INTO EMPLOYEE VALUES('E0006','Manu','Supplier','E0001','D003','19/june/13',5000,450);
+DAY2
+
+
+CREATE TABLE DEPARTMENT(DeptNo Varchar2(4),DeptName Varchar2(5),Location Varchar2(20));
+INSERT INTO DEPARTMENT VALUES('D001','DeptA','A block');
+INSERT INTO DEPARTMENT VALUES('D002','DeptB','B block');
+INSERT INTO DEPARTMENT VALUES('D003','DeptC','C block');
+INSERT INTO DEPARTMENT VALUES('D004','DeptD','D block');
+
+CREATE TABLE CLIENT(Cno Varchar2(6),Name Varchar2(20),City Varchar2(15),PinCode Number(8),State Varchar2(15),Baldue Number(10,2));
+INSERT INTO CLIENT VALUES('C00','Sara','Cochin',680324,'Kerala',1000);
+INSERT INTO CLIENT VALUES('C01','Nimmy','Cochin',680324,'Kerala',14000);
+INSERT INTO CLIENT VALUES('C02','Susan','Cochin',680324,'Kerala',0);
+INSERT INTO CLIENT VALUES('C03','Anjana','Salem',680345,'TamilNadu',5000);
+INSERT INTO CLIENT VALUES('C04','Sneha','Pune',680223,'Maharashtra',500);
+INSERT INTO CLIENT VALUES('C05','Annet','Gandipuram',680321,'Karnataka',7600);
+INSERT INTO CLIENT VALUES('C06','Ann','Bombay',682111,'Maharashtra',2055);
+
+SELECT * FROM EMPLOYEE;
+SELECT * FROM DEPARTMENT;
+SELECT * FROM CLIENT;
+
+INSERT INTO EMPLOYEE VALUES('E0001','Mary','Engineer','E0001','D004','27/dec/12',40000,400);
+
+SELECT NAME||' FROM '||CITY||' HAS '||BALDUE||' BALANCE DUE ' FROM CLIENT;
+
+SELECT * FROM CLIENT WHERE ROWNUM <=4;
+
+SELECT EMPNAME,HIREDATE,SALARY FROM EMPLOYEE;
+
+SELECT EMPNAME FROM EMPLOYEE WHERE EMPNAME LIKE 'A%' OR EMPNAME LIKE 'K%';
+
+SELECT DISTINCT CITY FROM CLIENT;
+
+SELECT EMPNAME FROM EMPLOYEE WHERE (HIREDATE>'31-dec-12' AND SALARY>17500 AND JOB="MANAGER");
+
+SELECT EMPNAME FROM EMPLOYEE WHERE EMPNAME BETWEEN 'E' AND 'L';
+
+UPDATE CLIENT SET CITY='Delhi' WHERE CNO='C03';
+
+UPDATE EMPLOYEE SET COMM=600 WHERE EMPNAME='Abey';
+
+SELECT BALDUE AS DUEBALANCE FROM CLIENT;
+
+SELECT NAME FROM CLIENT WHERE STATE NOT IN ('Kerala');
+
+
+
+DAY 3
+
+
+DAY3 PROGRAM 3
+
+ALTER TABLE CLIENT
+ADD CONSTRAINT C_PK PRIMARY KEY(CNO);
+
+ALTER TABLE EMPLOYEE
+ADD CONSTRAINT C2_PK FOREIGN KEY(DEPTNO) REFERENCES DEPARTMENT(DEPTNO);
+ALTER TABLE EMPLOYEE
+ADD CONSTRAINT C3_PK FOREIGN KEY(MANAGER) REFERENCES EMPLOYEE(MANAGER);
+
+b part error for manager, make sure deptno is primary in department table
+c part you don't have doo6 dept so error
+
+INSERT INTO EMPLOYEE VALUES('E0008','May','Engineer','E0001','D006','27/dec/12',40000,400);
+
+
+DAY3 PROGRAM 4
+
+ALTER TABLE Employee ADD CONSTRAINT UNI_JOB UNIQUE (Job);
+SELECT TABLE_NAME,CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE TABLE_NAME='EMPLOYEE';
+
+ALTER TABLE Employee ADD CONSTRAINT chk_comm CHECK(comm>400);
+SELECT TABLE_NAME,CONSTRAINT_NAME,SEARCH_CONDITION FROM USER_CONSTRAINTS WHERE TABLE_NAME='EMPLOYEE';
+
+ALTER TABLE Employee MODIFY Salary DEFAULT 25000;
+SELECT COLUMN_NAME,DATA_DEFAULT FROM USER_TAB_COLUMNS WHERE TABLE_NAME='EMPLOYEE';
+
+ALTER TABLE Employee DROP UNIQUE(Job);
+SELECT TABLE_NAME,CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE TABLE_NAME='EMPLOYEE';
+
+SELECT TABLE_NAME,CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE TABLE_NAME='EMPLOYEE';
+
+
+
+DAY4  
+
+
+DAY4 PROGRAM 5
+
+A)
+SELECT 'SARA PAUL' FROM DUAL;
+
+CREATE TABLE Client
+(
+  Cno Varchar2(6) NOT NULL,
+  Name Varchar2(10),
+  City Varchar2(15),
+  PinCode Number(8),
+  State Varchar2(15),
+  Baldue Number(10,2)
+);
+
+DESC Client
+
+INSERT ALL 
+INTO Client (Cno,Name,City,Pincode,State,Baldue) VALUES ('C01','Nimmy','Cochin',680324,'Kerala',14000)
+INTO Client (Cno,Name,City,Pincode,State,Baldue) VALUES ('C02','Susan','Cochin',680324,'Kerala',0)
+INTO Client (Cno,Name,City,Pincode,State,Baldue) VALUES ('C03','Anjana','Salem',680345,'TamilNadu',5000)
+INTO Client (Cno,Name,City,Pincode,State,Baldue) VALUES ('C04','Sneha','Pune',680223,'Maharashtra',500)
+INTO Client (Cno,Name,City,Pincode,State,Baldue) VALUES ('C05','Annet','Gandipuram',680321,'Karnataka',7600)
+INTO Client (Cno,Name,City,Pincode,State,Baldue) VALUES ('C06','Ann','Bombay',682111,'Maharashtra',2055)
+SELECT * FROM dual;
+
+SELECT * FROM Client;
+
+SAVEPOINT A;
+
+DELETE FROM Client
+WHERE Baldue = 0;
+
+SELECT * FROM Client;
+
+B)
+
+SELECT 'SARA PAUL' FROM DUAL;
+
+ROLLBACK TO A;
+
+COMMIT;
+
+SELECT * FROM Client;
+
+
+DAY4 PROGRAM 6
+
+//NOT WORKING//
+
+a)
+
+create user data_owner identified by "Supersecurepassword!";
+
+GRANT ALL PRIVILEGES on Client TO data_owner;
+
+b)
+
+CREATE USER u identified by "uc";
+
+GRANT select, update, insert on Employee to u identified by "uc";
+
+c)
+
+
+REVOKE ALL PRIVILEGES on Client FROM data_owner;
+
+d)
+
+REVOKE select, update, insert on Employee FROM u;
+
+
+DAY5
+
+7A)
+CREATE VIEW CUST_VW AS
+SELECT EMPID, EMPNAME, JOB, MANAGER
+FROM EMPLOYEE;
+
+7B)
+CREATE OR REPLACE VIEW CUST_VW AS
+SELECT JOB
+FROM EMPLOYEE
+SETJOB="SENIOR CLERK"
+WHERE JOB="CLERK";
+
+7C)
+DROP VIEW CUST_VW AS
+SELECT EMPNAME
+FROM EMPLOYEE
+WHERE EMPNAME="KEVIN";
+
+7D)
+DROP VIEW CUST_VW
+
+8)
+SELECT POWER(16,5) FROM DUAL;
+SELECT LENGTH('APPLICATION') FROM DUAL;
+SELECT LAST_DAY(SYSDATE) FROM DUAL;
+SELECT TO_CHAR(65432,'$99999') FROM DUAL;
+SELECT SYSTIMESTAMP FROM DUAL;
+SELECT EXTRACT(YEAR FROM HireDate) "Year of Hiring" FROM Employee;
+SELECT EmpName,round(MONTHS_BETWEEN(SYSDATE,HIREDATE)) "MONTHS_BETWEEN" FROM Employee;
+SELECT COUNT(*) "No of DEPT" FROM Department;
+SELECT EmpName ,TO_CHAR(HireDate,'DAY,DDth MONTH,yyyy') AS HireDate FROM Employee;
+
+9)
+SELECT SUM(Baldue) FROM Client;
+SELECT COUNT(*) "No of Employees" FROM Employee;
+SELECT MIN(Baldue),MAX(Baldue) FROM Client;
+SELECT AVG(Salary) FROM Employee;
+
+
+DAY6
+
+10)
+SELECT Name 
+FROM Client
+ORDER BY Name ASC;
+
+SELECT DeptNo ,Max(Salary)
+FROM Employee
+GROUP BY DeptNo;
+
+SELECT DeptNo ,Min(Salary)
+FROM Employee
+GROUP BY DeptNo
+HAVING Deptno NOT LIKE 'D001';
+
+11)
+SELECT DeptNo FROM Employee UNION SELECT DeptNo FROM Department;
+
+SELECT DeptNo FROM Employee MINUS SELECT DeptNo FROM Department;
+
+SELECT * FROM Employee WHERE Salary > (SELECT Salary FROM Employee WHERE EmpName='Adarsh');
+
+SELECT * FROM Employee WHERE Salary <(SELECT Min(Salary) FROM Employee WHERE DeptNo='D004');
+
+SELECT * FROM Employee WHERE Salary <(SELECT Min(Salary) FROM Employee WHERE DeptNo='D004');
+
+SELECT EmpName,DeptName FROM Employee,Department WHERE Salary>20000 AND Employee.DeptNo=Department.DeptNo;
+
+SELECT e1.EmpName,e1.Job,e1.Manager FROM Employee e1 LEFT OUTER JOIN Employee e2 ON e1.EmpId =e2.EmpId;
+
+SELECT e1.EmpName,e1.Job,e1.Manager FROM Employee e1 RIGHT OUTER JOIN Employee e2 ON e1.EmpId =e2.EmpId;
+
+SELECT e1.EmpName,e1.Job,e1.Manager FROM Employee e1 FULL OUTER JOIN Employee e2 ON e1.EmpId =e2.EmpId;
+
+
+
+DAY7
+12A)
+create table areas ( r number(2), area number (14,2));
+
+declare
+r number(5);
+area number(14,2);
+pi constant number (4,2):=3.14;
+begin
+r:=5;
+while r<=15
+loop
+area:=pi*r*r;
+insert into areas values(r,area );
+r:=r+1;
+end loop;
+end;
+/
+
+select * from areas;
+
+12B)
+create table account (acct_no number(5) primary key,acct_name varchar2(10), balance number(10)); 
+insert into account values(1, 'aaa', 1000);
+insert into account values(2, 'bbb', 100);
+insert into account values(3, 'ccc', 1100);
+insert into account values(4, 'ddd', 700);
+insert into account values(5, 'eee', 1700); 
+
+DECLARE 
+xacct_no number(5); 
+xmin_bal number(5):=1000;  
+xbalance number(5); 
+BEGIN
+xacct_no:=&xacct_no;  
+select balance into xbalance  
+from account  
+where acct_no=xacct_no;  
+IF(xbalance < xmin_bal) THEN
+update account  
+set balance=balance-100  
+where acct_no=xacct_no;                                                                 
+xbalance:=xbalance-100;  
+dbms_output.put_line('Rs 100 is deducted and current balance is '||xbalance);  
+ELSE             
+dbms_output.put_line('Current balance is '||xbalance); 
+END IF;     
+END;  
+/ 
+
+DAY8
+
+13a)
+SELECT * FROM Employee;
+
+SET SERVEROUTPUT ON
+
+CREATE OR REPLACE PROCEDURE UpdateComm 
+AS 
+xEName varchar(10);
+xCom number(5);
+BEGIN 
+xEName:='&Employee_Name';
+SELECT Comm INTO xCom
+FROM Employee
+WHERE EmpName=xEName; 
+UPDATE Employee
+SET Comm = Comm + 0.05*Comm
+WHERE EmpName=xEName;
+xCom:=xCom + 0.05*xCom;
+DBMS_OUTPUT.PUT_LINE('The new comission value is '||xCom); 
+END; 
+/
+
+execute updatecomm;
+
+13b)
+SELECT * FROM Employee;
+
+CREATE OR REPLACE FUNCTION GetManager(xempid varchar)
+RETURN VARCHAR2 IS  
+Mname Employee.EmpName%TYPE;
+Mid Employee.Manager%TYPE;
+BEGIN
+SELECT Manager INTO Mid 
+FROM Employee
+WHERE EmpId = xempid;
+SELECT EmpName INTO Mname
+FROM Employee
+WHERE EmpId = Mid;
+RETURN ( 'The Manager for employee is '||Mname);
+END GetManager; 
+/
+
+SET SERVEROUTPUT ON
+
+DECLARE
+xempid varchar(10); 
+BEGIN
+xempid:='&Employee_id';
+DBMS_OUTPUT.PUT_LINE(GetManager(xempid));
+END;
+/
+
+
+
+DAY 9
+
+15)
+a)
+i) & ii)
+
+CREATE OR REPLACE PACKAGE employee_management AS
+PROCEDURE hire_emp(xEmpId IN VARCHAR2,xEmpName IN VARCHAR2,xJob IN VARCHAR2,xManager IN VARCHAR2,xDeptNo IN VARCHAR2,xHireDate IN DATE,xSalary IN NUMBER,xComm IN NUMBER);
+FUNCTION inc_comm (xEmpId VARCHAR2) RETURN NUMBER;
+END employee_management;
+/
+
+CREATE or REPLACE PACKAGE BODY employee_management AS
+PROCEDURE hire_emp (xEmpId IN VARCHAR2,xEmpName IN VARCHAR2,xJob IN VARCHAR2,xManager IN VARCHAR2,xDeptNo IN VARCHAR2,xHireDate IN DATE,xSalary IN NUMBER,xComm IN NUMBER)
+AS
+BEGIN
+INSERT INTO Employee VALUES (xEmpId, xEmpName,xJob,xManager, xDeptNo,xHireDate, xSalary, xComm);
+DBMS_OUTPUT.PUT_LINE('Employee is hired');	
+END hire_emp;
+FUNCTION inc_comm (xEmpId IN varchar2) RETURN NUMBER IS 
+xCom Employee.Comm%TYPE;
+BEGIN 
+SELECT Comm INTO xCom
+FROM Employee
+WHERE EmpId=xEmpId; 
+UPDATE Employee
+SET Comm = Comm + 0.05*Comm
+WHERE EmpId=xEmpId; 
+xCom:=xCom + 0.05*xCom;
+RETURN (xCom);
+END inc_comm;
+END employee_management;
+/
+
+SET SERVEROUTPUT ON
+
+BEGIN
+employee_management.hire_emp('E0009','Harry','Analyst','E0002','D002',TO_DATE('15/12/12','DD/MM/YY'),10000,1000);
+END;
+/
+
+SELECT * FROM EMPLOYEE;
+
+SET SERVEROUTPUT ON
+
+DECLARE
+NewCom NUMBER(10);
+BEGIN
+NewCom:=employee_management.inc_comm('E0009');
+DBMS_OUTPUT.PUT_LINE('The new comission value after incrementing by 5% is '||NewCom);
+END;
+/
+
+16.
+
+DAY 10
+
+17. 
+SELECT * FROM Employee;
+SELECT * FROM Client;
+SELECT * FROM Client WHERE State != 'Kerala';
+
